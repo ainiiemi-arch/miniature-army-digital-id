@@ -8,12 +8,12 @@ function createPrompt(theme){
 
 theme = theme.toLowerCase();
 
-if(theme.includes("video")){
+if(theme.includes("video"))
 
 return `
 🎬 Miniature Video Prompt by Aeniikoo
 
-Create a cinematic miniature video scene of ${theme}, tiny cute chibi characters interacting in a handcrafted miniature world, soft pastel aesthetic, dreamy lighting, realistic toy textures, tilt shift effect, smooth camera movement, cinematic depth of field, magical atmosphere, ultra detailed, animated miniature environment, cozy vibes, trending TikTok aesthetic, 4k animation quality
+Create a cinematic miniature video scene of ${theme}, tiny cute chibi characters interact
 
 Negative Prompt:
 blurry, low quality, ugly motion, bad lighting, distorted characters, watermark
@@ -35,16 +35,11 @@ low quality, blurry, ugly face, distorted anatomy
 }
 
 else{
-
 return `
-🎀 Miniature Army Digital ID by Aeniikoo
-
-Prompt:
-ultra detailed miniature ${theme}, tiny cute chibi characters, handcrafted diorama, kawaii pastel aesthetic, adorable miniature world, tiny realistic objects, cinematic miniature photography, soft lighting, tilt shift effect, cozy atmosphere, highly detailed, toy photography style, realistic textures, cute tiny people interacting, warm pastel colors, aesthetic composition, 4k ultra hd
-
-Negative Prompt:
-low quality, blur, messy background, watermark, bad anatomy, distorted objects, ugly lighting
+ultra detailed miniature ${theme}, cute chibi characters...
 `;
+}
+
 
 }
 
@@ -169,6 +164,9 @@ placeholder="Minta prompt miniature..."
 ↑
 </button>
 
+<div class="actions">
+  <button onclick="editText()">Edit</button>
+  <button onclick="deleteText()">Delete</button>
 </div>
 
 <div id="hasil"></div>
@@ -176,6 +174,19 @@ placeholder="Minta prompt miniature..."
 </div>
 
 <script>
+
+function editText() {
+  let text = document.getElementById("tema").value;
+  let newText = prompt("Edit teks:", text);
+
+  if (newText !== null) {
+    document.getElementById("tema").value = newText;
+  }
+}
+
+function deleteText() {
+  document.getElementById("tema").value = "";
+}
 
 const hasil = document.getElementById("hasil");
 
@@ -224,7 +235,6 @@ generateMiniature();
 </script>
 
 </body>
-
 </html>
 `);
 
