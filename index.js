@@ -238,8 +238,6 @@ generateMiniature();
 </html>
 `);
 
-});
-
 app.post("/generate",(req,res)=>{
 
 const theme = req.body.theme;
