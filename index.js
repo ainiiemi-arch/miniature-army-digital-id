@@ -7,19 +7,20 @@ app.use(express.json());
 function createPrompt(theme, style){
 
 return `
-🌸 ${style} Miniature Prompt 🌸
+🌸 ${style} 🌸
 
-Ultra detailed ${style} miniature ${theme},
-cute chibi characters,
-anime kawaii aesthetic,
+Ultra detailed ${style} ${theme},
+cute chibi miniature characters,
 tiny handcrafted diorama,
+anime kawaii aesthetic,
 soft cinematic lighting,
 dreamy sakura atmosphere,
 pink pastel color palette,
 adorable miniature world,
 high detail composition,
-4k ultra hd,
-professional anime render
+tilt shift photography,
+professional miniature render,
+4k ultra hd
 
 Negative Prompt:
 low quality,
@@ -41,9 +42,9 @@ res.send(`
 
 <head>
 
-<title>Aeniikoo AI Premium</title>
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Aeniikoo Miniature AI</title>
 
 <style>
 
@@ -59,15 +60,20 @@ background:
 linear-gradient(rgba(255,240,246,0.88),
 rgba(255,240,246,0.88)),
 url("https://images.unsplash.com/photo-1522383225653-ed111181a951?q=80&w=1200");
+
 background-size:cover;
 background-position:center;
 background-attachment:fixed;
+
 min-height:100vh;
-overflow-x:hidden;
+
 display:flex;
 justify-content:center;
 align-items:center;
+
 padding:20px;
+
+overflow-x:hidden;
 }
 
 /* Sakura Animation */
@@ -98,12 +104,18 @@ opacity:0;
 .container{
 position:relative;
 z-index:2;
+
 width:100%;
 max-width:550px;
+
 background:rgba(255,255,255,0.72);
+
 backdrop-filter:blur(18px);
+
 border-radius:35px;
+
 padding:25px;
+
 box-shadow:0 10px 40px rgba(0,0,0,0.15);
 }
 
@@ -116,8 +128,8 @@ margin-bottom:10px;
 
 .subtitle{
 text-align:center;
-color:#777;
-margin-bottom:25px;
+color:#666;
+margin-bottom:20px;
 }
 
 input,
@@ -127,7 +139,7 @@ padding:15px;
 border:none;
 border-radius:18px;
 margin-top:12px;
-background:#fff;
+background:white;
 font-size:16px;
 outline:none;
 }
@@ -163,7 +175,7 @@ display:none;
 }
 
 .card{
-background:rgba(255,240,246,0.9);
+background:#fff0f7;
 padding:20px;
 border-radius:25px;
 margin-top:20px;
@@ -283,7 +295,7 @@ color:white;
 <h1>🌸 Aeniikoo AI</h1>
 
 <p class="subtitle">
-Premium Anime Miniature Generator ✨
+Premium Miniature Generator ✨
 </p>
 
 <input
@@ -313,7 +325,7 @@ Login
 <h1>Welcome ✨</h1>
 
 <p class="subtitle">
-Anime Premium Dashboard 🌸
+Miniature Premium Dashboard 🌸
 </p>
 
 <div class="card">
@@ -328,11 +340,65 @@ Premium Member Active 🚀
 
 <select id="style">
 
-<option>Anime</option>
-<option>Ghibli</option>
-<option>Pixar</option>
-<option>Cyberpunk</option>
-<option>Realistic</option>
+<option>Anime Miniature</option>
+
+<option>Kawaii Miniature</option>
+
+<option>Miniature Diorama</option>
+
+<option>Tiny World</option>
+
+<option>Mini Cafe</option>
+
+<option>Mini Ramen Shop</option>
+
+<option>Mini Bakery</option>
+
+<option>Mini Market</option>
+
+<option>Mini Kitchen</option>
+
+<option>Tiny Bedroom</option>
+
+<option>Miniature City</option>
+
+<option>Japanese Miniature</option>
+
+<option>Sakura Miniature</option>
+
+<option>Fantasy Miniature</option>
+
+<option>Cyberpunk Miniature</option>
+
+<option>Studio Ghibli Miniature</option>
+
+<option>Cute Village Miniature</option>
+
+<option>Tiny House Miniature</option>
+
+<option>LoFi Miniature Room</option>
+
+<option>Pastel Miniature</option>
+
+<option>Dreamy Miniature</option>
+
+<option>Ultra Detail Miniature</option>
+
+<option>Viral TikTok Miniature</option>
+
+<option>Moonlight Miniature</option>
+
+<option>Miniature Street Food</option>
+
+<option>Miniature Theme Park</option>
+
+<option>Miniature Convenience Store</option>
+
+<option>Miniature Bookstore</option>
+
+<option>Miniature Flower Shop</option>
+
+<option>Miniature Gaming Room</option>
 
 </select>
 
@@ -379,7 +445,7 @@ Logout
 </div>
 
 <div id="loading">
-Generating Anime Prompt...
+Generating Miniature Prompt...
 </div>
 
 <div id="hasil"></div>
@@ -496,7 +562,7 @@ if(localStorage.getItem("login")){
 showDashboard();
 }
 
-/* Tool */
+/* Features */
 
 function toggleDark(){
 document.body.classList.toggle("dark");
@@ -552,7 +618,7 @@ document.createElement("a");
 a.href =
 URL.createObjectURL(blob);
 
-a.download = "prompt.txt";
+a.download = "miniature-prompt.txt";
 
 a.click();
 
@@ -638,7 +704,7 @@ const style = req.body.style;
 if(!theme){
 
 return res.json({
-result:"Masukkan tema dulu 🌸"
+result:"Masukkan tema miniature dulu 🌸"
 });
 
 }
