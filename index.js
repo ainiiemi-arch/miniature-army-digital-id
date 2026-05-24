@@ -4,21 +4,6 @@ const app = express();
 
 app.use(express.json());
 
-function createPrompt(theme, style){
-
-theme = theme.toLowerCase();
-
-return `
-✨ ${style} Miniature Prompt
-
-ultra detailed ${style} miniature ${theme}, cute chibi characters, handcrafted diorama, cinematic lighting, kawaii pastel aesthetic, adorable tiny world, realistic miniature objects, tilt shift effect, cozy atmosphere, highly detailed, aesthetic composition, 4k ultra hd
-
-Negative Prompt:
-low quality, blur, distorted anatomy, ugly lighting, watermark
-`;
-
-}
-
 app.get("/", (req,res)=>{
 
 res.send(`
@@ -28,34 +13,26 @@ res.send(`
 
 <head>
 
-<title>Miniature Army Digital ID</title>
+<title>Aeniikoo AI Premium</title>
 
 <style>
 
 body{
 margin:0;
-padding:0;
 font-family:sans-serif;
 background:linear-gradient(135deg,#ffd6e7,#fff);
 height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-transition:0.3s;
 }
 
-.dark{
-background:#111;
-color:white;
-}
-
-.box{
+.container{
 width:90%;
-max-width:550px;
-background:rgba(255,255,255,0.7);
-backdrop-filter:blur(10px);
-padding:25px;
-border-radius:30px;
+max-width:420px;
+background:white;
+padding:30px;
+border-radius:25px;
 box-shadow:0 10px 30px rgba(0,0,0,0.1);
 }
 
@@ -64,95 +41,42 @@ text-align:center;
 color:#ff4fa3;
 }
 
-.chatbox{
-display:flex;
-align-items:center;
-background:#f5f5f5;
-border-radius:50px;
-padding:10px;
-margin-top:20px;
-}
-
-.chatbox input{
-flex:1;
+input{
+width:100%;
+padding:15px;
+margin-top:12px;
 border:none;
-background:transparent;
-outline:none;
-padding:10px;
+border-radius:15px;
+background:#f5f5f5;
 font-size:16px;
 }
 
-.chatbox button{
-width:50px;
-height:50px;
-border:none;
-border-radius:50%;
-background:black;
-color:white;
-font-size:20px;
-cursor:pointer;
-}
-
-.actions{
-display:flex;
-gap:10px;
+button{
+width:100%;
+padding:15px;
 margin-top:15px;
-flex-wrap:wrap;
-}
-
-.actions button,
-select{
-flex:1;
-padding:12px;
 border:none;
-border-radius:12px;
+border-radius:15px;
 background:#ff4fa3;
 color:white;
+font-size:16px;
 font-weight:bold;
 cursor:pointer;
 }
 
-#hasil{
-margin-top:20px;
-max-height:400px;
-overflow-y:auto;
-padding:5px;
-}
-
-.msg-user{
-background:#ffeaf4;
-padding:12px;
-border-radius:15px;
-margin-top:10px;
-text-align:right;
-}
-
-.msg-bot{
-background:white;
-padding:15px;
-border-radius:15px;
-margin-top:10px;
-border:1px solid #eee;
-white-space:pre-wrap;
-}
-
-.dark .msg-bot{
-background:#222;
-color:white;
-}
-
-#loading{
+#dashboard{
 display:none;
-text-align:center;
-margin-top:10px;
-font-weight:bold;
-animation:pulse 1s infinite;
 }
 
-@keyframes pulse{
-0%{opacity:0.3;}
-50%{opacity:1;}
-100%{opacity:0.3;}
+.card{
+background:#fff0f7;
+padding:20px;
+border-radius:20px;
+margin-top:20px;
+}
+
+.logout{
+background:black;
 }
 
 </style>
@@ -161,174 +85,129 @@ animation:pulse 1s infinite;
 
 <body>
 
-<div class="box">
+<div class="container">
 
-<h1>Miniature Army Digital ID</h1>
+<div id="auth">
 
-<p style="text-align:center;">by Aeniikoo ✨</p>
+<h1>Aeniikoo AI ✨</h1>
 
-<div class="chatbox">
+<input type="text" id="username" placeholder="Username">
 
-<input
-type="text"
-id="tema"
-placeholder="Minta prompt miniature..."
->
+<input type="password" id="password" placeholder="Password">
 
-<button onclick="generateMiniature()">
-↑
+<button onclick="signup()">
+Sign Up
+</button>
+
+<button onclick="login()">
+Login
 </button>
 
 </div>
 
-<div class="actions">
+<div id="dashboard">
 
-<select id="style">
-<option value="Anime">Anime</option>
-<option value="Ghibli">Ghibli</option>
-<option value="Pixar">Pixar</option>
-<option value="Realistic">Realistic</option>
-<option value="Cyberpunk">Cyberpunk</option>
-</select>
+<h1>Welcome ✨</h1>
 
-<button onclick="copyPrompt()">
-Copy
-</button>
+<div class="card">
 
-<button onclick="downloadPrompt()">
-Download
-</button>
+<h3 id="welcomeUser"></h3>
 
-<button onclick="toggleDark()">
-Dark
-</button>
+<p>Premium Member Active 🚀</p>
 
-<button onclick="editText()">
-Edit
-</button>
-
-<button onclick="deleteText()">
-Delete
-</button>
+<p>✔ AI Prompt Generator</p>
+<p>✔ Edit Text</p>
+<p>✔ Delete Text</p>
+<p>✔ Download Prompt</p>
+<p>✔ Dark Mode</p>
 
 </div>
 
-<div id="loading">
-Generating Prompt...
-</div>
+<button class="logout" onclick="logout()">
+Logout
+</button>
 
-<div id="hasil"></div>
+</div>
 
 </div>
 
 <script>
 
-function toggleDark(){
-document.body.classList.toggle("dark");
-}
+function signup(){
 
-function editText(){
+const username = document.getElementById("username").value;
 
-let text = document.getElementById("tema").value;
+const password = document.getElementById("password").value;
 
-let newText = prompt("Edit teks:", text);
+if(!username || !password){
 
-if(newText !== null){
-document.getElementById("tema").value = newText;
-}
+alert("Isi username dan password");
+
+return;
 
 }
 
-function deleteText(){
-document.getElementById("tema").value = "";
-}
+const user = {
+username,
+password
+};
 
-function copyPrompt(){
+localStorage.setItem("user", JSON.stringify(user));
 
-const text = document.getElementById("hasil").innerText;
-
-navigator.clipboard.writeText(text);
-
-alert("Prompt copied ✨");
+alert("Sign Up berhasil ✨");
 
 }
 
-function downloadPrompt(){
+function login(){
 
-const text = document.getElementById("hasil").innerText;
+const username = document.getElementById("username").value;
 
-const blob = new Blob([text], {type:"text/plain"});
+const password = document.getElementById("password").value;
 
-const a = document.createElement("a");
+const savedUser = JSON.parse(localStorage.getItem("user"));
 
-a.href = URL.createObjectURL(blob);
+if(
+savedUser &&
+username === savedUser.username &&
+password === savedUser.password
+){
 
-a.download = "prompt.txt";
+localStorage.setItem("loggedIn", "true");
 
-a.click();
+showDashboard();
 
-}
+}else{
 
-const hasil = document.getElementById("hasil");
-
-async function generateMiniature(){
-
-const tema = document.getElementById("tema").value;
-
-const style = document.getElementById("style").value;
-
-if(!tema) return;
-
-document.getElementById("loading").style.display = "block";
-
-hasil.innerHTML += \`
-<div class="msg-user">\${tema}</div>
-\`;
-
-document.getElementById("tema").value = "";
-
-const response = await fetch("/generate",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-theme:tema,
-style:style
-})
-
-});
-
-const data = await response.json();
-
-document.getElementById("loading").style.display = "none";
-
-hasil.innerHTML += \`
-<div class="msg-bot">\${data.result}</div>
-\`;
-
-hasil.scrollTop = hasil.scrollHeight;
-
-let history = JSON.parse(localStorage.getItem("history")) || [];
-
-history.push(tema);
-
-localStorage.setItem("history", JSON.stringify(history));
+alert("Username atau Password salah");
 
 }
 
-document
-.getElementById("tema")
-.addEventListener("keypress", function(e){
-
-if(e.key === "Enter"){
-generateMiniature();
 }
 
-});
+function logout(){
+
+localStorage.removeItem("loggedIn");
+
+location.reload();
+
+}
+
+function showDashboard(){
+
+document.getElementById("auth").style.display = "none";
+
+document.getElementById("dashboard").style.display = "block";
+
+const savedUser = JSON.parse(localStorage.getItem("user"));
+
+document.getElementById("welcomeUser").innerText =
+"Hello, " + savedUser.username;
+
+}
+
+if(localStorage.getItem("loggedIn") === "true"){
+showDashboard();
+}
 
 </script>
 
@@ -336,28 +215,6 @@ generateMiniature();
 </html>
 
 `);
-
-});
-
-app.post("/generate", (req,res)=>{
-
-const theme = req.body.theme;
-
-const style = req.body.style || "Realistic";
-
-if(!theme){
-
-return res.json({
-result:"Masukkan tema miniature dulu ✨"
-});
-
-}
-
-const result = createPrompt(theme, style);
-
-res.json({
-result:result
-});
 
 });
 
