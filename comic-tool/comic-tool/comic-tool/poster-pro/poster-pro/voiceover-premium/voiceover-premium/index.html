@@ -1,0 +1,403 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Voice Over Premium</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#f7efff,#e9d5ff,#d8b4fe);
+min-height:100vh;
+padding:30px;
+overflow-x:hidden;
+color:#6b21a8;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+}
+
+.title{
+text-align:center;
+margin-bottom:40px;
+}
+
+.title h1{
+font-size:58px;
+font-weight:700;
+color:#8b5cf6;
+text-shadow:0 5px 15px rgba(139,92,246,.3);
+}
+
+.title p{
+margin-top:10px;
+font-size:18px;
+color:#7e22ce;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px;
+}
+
+.card{
+background:rgba(255,255,255,.55);
+backdrop-filter:blur(20px);
+border-radius:30px;
+padding:25px;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+border:1px solid rgba(255,255,255,.4);
+}
+
+.card h2{
+margin-bottom:20px;
+font-size:24px;
+}
+
+textarea{
+width:100%;
+height:230px;
+border:none;
+outline:none;
+resize:none;
+padding:20px;
+border-radius:20px;
+font-size:15px;
+background:white;
+color:#555;
+}
+
+select,
+input[type=range]{
+width:100%;
+margin-top:10px;
+margin-bottom:20px;
+}
+
+select{
+padding:15px;
+border:none;
+border-radius:15px;
+font-size:15px;
+}
+
+.label{
+font-weight:600;
+font-size:14px;
+margin-bottom:8px;
+display:block;
+}
+
+.styles{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+margin-top:20px;
+}
+
+.style{
+background:white;
+padding:18px;
+border-radius:20px;
+text-align:center;
+transition:.3s;
+cursor:pointer;
+}
+
+.style:hover{
+transform:translateY(-5px);
+border:2px solid #a855f7;
+}
+
+.style img{
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover;
+margin-bottom:10px;
+}
+
+.style h3{
+font-size:15px;
+}
+
+.generate{
+margin-top:25px;
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+}
+
+button{
+border:none;
+padding:16px 28px;
+border-radius:50px;
+font-size:15px;
+font-weight:600;
+cursor:pointer;
+transition:.3s;
+}
+
+.primary{
+background:linear-gradient(90deg,#a855f7,#7c3aed);
+color:white;
+box-shadow:0 10px 20px rgba(124,58,237,.3);
+}
+
+.primary:hover{
+transform:scale(1.05);
+}
+
+.secondary{
+background:white;
+color:#7c3aed;
+}
+
+audio{
+width:100%;
+margin-top:25px;
+}
+
+.download-box{
+margin-top:20px;
+display:none;
+}
+
+.download-btn{
+display:inline-block;
+padding:15px 25px;
+background:#8b5cf6;
+color:white;
+text-decoration:none;
+border-radius:50px;
+font-weight:600;
+}
+
+.feature-grid{
+margin-top:35px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:20px;
+}
+
+.feature{
+background:rgba(255,255,255,.5);
+padding:20px;
+border-radius:25px;
+text-align:center;
+}
+
+.feature h4{
+margin-top:10px;
+}
+
+@media(max-width:900px){
+
+.grid{
+grid-template-columns:1fr;
+}
+
+.title h1{
+font-size:40px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="title">
+<h1>Voice Over Premium</h1>
+<p>Pastel Lilac Kpoper Aesthetic ✨</p>
+</div>
+
+<div class="grid">
+
+<div class="card">
+
+<h2>🎤 Input Script</h2>
+
+<textarea id="text">
+Halo semuanya~
+Selamat datang di Voice Over Premium aesthetic 💜
+</textarea>
+
+<div class="generate">
+
+<button class="primary" onclick="generateVoice()">
+Generate Voice
+</button>
+
+<button class="secondary" onclick="clearText()">
+Clear
+</button>
+
+</div>
+
+<audio controls id="audioPlayer"></audio>
+
+<div class="download-box" id="downloadBox">
+
+<a id="downloadBtn" class="download-btn" download>
+⬇ Download MP3
+</a>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>⚙️ Pengaturan Voice</h2>
+
+<label class="label">Bahasa</label>
+<select>
+<option>Indonesia</option>
+<option>English</option>
+<option>Korean</option>
+<option>Japanese</option>
+</select>
+
+<label class="label">Style Voice</label>
+<select>
+<option>Natural Female</option>
+<option>Kpop Idol</option>
+<option>Soft Cute</option>
+<option>Deep Narrator</option>
+<option>Elegant Premium</option>
+</select>
+
+<label class="label">Speed</label>
+<input type="range" min="0.5" max="2" step="0.1" value="1">
+
+<label class="label">Pitch</label>
+<input type="range" min="0.5" max="2" step="0.1" value="1">
+
+<div class="styles">
+
+<div class="style">
+<img src="https://i.pinimg.com/564x/47/70/7d/47707d2a8f5d3f32f78eaf7db92a4d8d.jpg">
+<h3>Natural</h3>
+</div>
+
+<div class="style">
+<img src="https://i.pinimg.com/564x/6c/07/37/6c07379a73f8e5afbf03a6d4240e3533.jpg">
+<h3>Cute</h3>
+</div>
+
+<div class="style">
+<img src="https://i.pinimg.com/564x/70/4e/65/704e652c50c56dc33d4a06c7e8d16d08.jpg">
+<h3>Kpop</h3>
+</div>
+
+<div class="style">
+<img src="https://i.pinimg.com/564x/4d/7f/83/4d7f838df60216791db6a18ec7dc80d6.jpg">
+<h3>Soft</h3>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="feature-grid">
+
+<div class="feature">
+<h4>🎧 Premium Audio</h4>
+<p>Natural & realistis</p>
+</div>
+
+<div class="feature">
+<h4>⚡ Fast Generate</h4>
+<p>Proses cepat</p>
+</div>
+
+<div class="feature">
+<h4>⬇ Download MP3</h4>
+<p>Download hasil audio</p>
+</div>
+
+<div class="feature">
+<h4>🌍 Multi Language</h4>
+<p>Banyak pilihan bahasa</p>
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+async function generateVoice(){
+
+const text = document.getElementById("text").value;
+
+if(!text){
+alert("Isi text terlebih dahulu");
+return;
+}
+
+const response = await fetch("/generate",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+text:text
+})
+
+});
+
+const data = await response.json();
+
+if(data.success){
+
+const audioPlayer = document.getElementById("audioPlayer");
+
+audioPlayer.src = "/" + data.audio;
+
+audioPlayer.play();
+
+document.getElementById("downloadBox").style.display = "block";
+
+document.getElementById("downloadBtn").href = "/" + data.audio;
+
+}
+
+}
+
+function clearText(){
+
+document.getElementById("text").value = "";
+
+}
+
+</script>
+
+</body>
+</html>

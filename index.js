@@ -4,54 +4,30 @@ const app = express();
 
 app.use(express.json());
 
-function createPrompt(theme) {
+function createPrompt(theme, style){
 
 theme = theme.toLowerCase();
 
-if (theme.includes("video")) {
-
 return `
-🎬 Miniature Video Prompt by Aeniikoo
+✨ ${style} Miniature Prompt
 
-Create a cinematic miniature video scene of ${theme}, tiny cute chibi characters interacting, handcrafted diorama, kawaii pastel aesthetic, realistic miniature objects, cozy lighting, tilt shift effect, cinematic camera movement, ultra detailed, adorable atmosphere.
+ultra detailed ${style} miniature ${theme}, cute chibi characters, handcrafted diorama, cinematic lighting, kawaii pastel aesthetic, adorable tiny world, realistic miniature objects, tilt shift effect, cozy atmosphere, highly detailed, aesthetic composition, 4k ultra hd
 
 Negative Prompt:
-blurry, low quality, ugly motion, bad lighting, distorted characters, watermark
-`;
-
-} else if (theme.includes("anime")) {
-
-return `
-🌸 Anime Miniature Prompt
-
-ultra detailed anime style miniature ${theme}, cute chibi anime characters, kawaii pastel aesthetic, handcrafted diorama, cinematic miniature photography, realistic textures, adorable tiny world, cozy atmosphere
-
-Negative Prompt:
-low quality, blurry, ugly face, distorted anatomy
-`;
-
-} else {
-
-return `
-✨ Miniature Prompt Generator
-
-ultra detailed miniature ${theme}, cute chibi characters, handcrafted diorama, kawaii pastel aesthetic, adorable miniature world, tiny realistic objects, cinematic miniature photography, soft lighting, tilt shift effect, cozy atmosphere, highly detailed, toy photography style, realistic textures, warm pastel colors, aesthetic composition, 4k ultra hd
-
-Negative Prompt:
-low quality, blur, messy background, watermark, distorted objects
+low quality, blur, distorted anatomy, ugly lighting, watermark
 `;
 
 }
 
-}
-
-app.get("/", (req, res) => {
+app.get("/", (req,res)=>{
 
 res.send(`
+
 <!DOCTYPE html>
 <html>
 
 <head>
+
 <title>Miniature Army Digital ID</title>
 
 <style>
@@ -60,17 +36,24 @@ body{
 margin:0;
 padding:0;
 font-family:sans-serif;
-background:#ffd6e7;
+background:linear-gradient(135deg,#ffd6e7,#fff);
 height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
+transition:0.3s;
+}
+
+.dark{
+background:#111;
+color:white;
 }
 
 .box{
 width:90%;
-max-width:500px;
-background:white;
+max-width:550px;
+background:rgba(255,255,255,0.7);
+backdrop-filter:blur(10px);
 padding:25px;
 border-radius:30px;
 box-shadow:0 10px 30px rgba(0,0,0,0.1);
@@ -79,11 +62,6 @@ box-shadow:0 10px 30px rgba(0,0,0,0.1);
 h1{
 text-align:center;
 color:#ff4fa3;
-}
-
-p{
-text-align:center;
-color:gray;
 }
 
 .chatbox{
@@ -119,11 +97,13 @@ cursor:pointer;
 display:flex;
 gap:10px;
 margin-top:15px;
+flex-wrap:wrap;
 }
 
-.actions button{
+.actions button,
+select{
 flex:1;
-padding:10px;
+padding:12px;
 border:none;
 border-radius:12px;
 background:#ff4fa3;
@@ -156,7 +136,27 @@ border:1px solid #eee;
 white-space:pre-wrap;
 }
 
+.dark .msg-bot{
+background:#222;
+color:white;
+}
+
+#loading{
+display:none;
+text-align:center;
+margin-top:10px;
+font-weight:bold;
+animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+0%{opacity:0.3;}
+50%{opacity:1;}
+100%{opacity:0.3;}
+}
+
 </style>
+
 </head>
 
 <body>
@@ -165,7 +165,7 @@ white-space:pre-wrap;
 
 <h1>Miniature Army Digital ID</h1>
 
-<p>by Aeniikoo ✨</p>
+<p style="text-align:center;">by Aeniikoo ✨</p>
 
 <div class="chatbox">
 
@@ -183,6 +183,26 @@ placeholder="Minta prompt miniature..."
 
 <div class="actions">
 
+<select id="style">
+<option value="Anime">Anime</option>
+<option value="Ghibli">Ghibli</option>
+<option value="Pixar">Pixar</option>
+<option value="Realistic">Realistic</option>
+<option value="Cyberpunk">Cyberpunk</option>
+</select>
+
+<button onclick="copyPrompt()">
+Copy
+</button>
+
+<button onclick="downloadPrompt()">
+Download
+</button>
+
+<button onclick="toggleDark()">
+Dark
+</button>
+
 <button onclick="editText()">
 Edit
 </button>
@@ -193,11 +213,19 @@ Delete
 
 </div>
 
+<div id="loading">
+Generating Prompt...
+</div>
+
 <div id="hasil"></div>
 
 </div>
 
 <script>
+
+function toggleDark(){
+document.body.classList.toggle("dark");
+}
 
 function editText(){
 
@@ -206,16 +234,38 @@ let text = document.getElementById("tema").value;
 let newText = prompt("Edit teks:", text);
 
 if(newText !== null){
-
 document.getElementById("tema").value = newText;
-
 }
 
 }
 
 function deleteText(){
-
 document.getElementById("tema").value = "";
+}
+
+function copyPrompt(){
+
+const text = document.getElementById("hasil").innerText;
+
+navigator.clipboard.writeText(text);
+
+alert("Prompt copied ✨");
+
+}
+
+function downloadPrompt(){
+
+const text = document.getElementById("hasil").innerText;
+
+const blob = new Blob([text], {type:"text/plain"});
+
+const a = document.createElement("a");
+
+a.href = URL.createObjectURL(blob);
+
+a.download = "prompt.txt";
+
+a.click();
 
 }
 
@@ -225,7 +275,11 @@ async function generateMiniature(){
 
 const tema = document.getElementById("tema").value;
 
+const style = document.getElementById("style").value;
+
 if(!tema) return;
+
+document.getElementById("loading").style.display = "block";
 
 hasil.innerHTML += \`
 <div class="msg-user">\${tema}</div>
@@ -242,18 +296,27 @@ headers:{
 },
 
 body:JSON.stringify({
-theme:tema
+theme:tema,
+style:style
 })
 
 });
 
 const data = await response.json();
 
+document.getElementById("loading").style.display = "none";
+
 hasil.innerHTML += \`
 <div class="msg-bot">\${data.result}</div>
 \`;
 
 hasil.scrollTop = hasil.scrollHeight;
+
+let history = JSON.parse(localStorage.getItem("history")) || [];
+
+history.push(tema);
+
+localStorage.setItem("history", JSON.stringify(history));
 
 }
 
@@ -262,9 +325,7 @@ document
 .addEventListener("keypress", function(e){
 
 if(e.key === "Enter"){
-
 generateMiniature();
-
 }
 
 });
@@ -273,13 +334,16 @@ generateMiniature();
 
 </body>
 </html>
+
 `);
 
 });
 
-app.post("/generate", (req, res) => {
+app.post("/generate", (req,res)=>{
 
 const theme = req.body.theme;
+
+const style = req.body.style || "Realistic";
 
 if(!theme){
 
@@ -289,7 +353,7 @@ result:"Masukkan tema miniature dulu ✨"
 
 }
 
-const result = createPrompt(theme);
+const result = createPrompt(theme, style);
 
 res.json({
 result:result
@@ -297,7 +361,7 @@ result:result
 
 });
 
-app.listen(3000, () => {
+app.listen(3000, ()=>{
 
 console.log("Running on http://localhost:3000");
 
