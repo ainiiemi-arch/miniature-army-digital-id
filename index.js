@@ -4,6 +4,34 @@ const app = express();
 
 app.use(express.json());
 
+function createPrompt(theme, style){
+
+return `
+🌸 ${style} Miniature Prompt 🌸
+
+Ultra detailed ${style} miniature ${theme},
+cute chibi characters,
+anime kawaii aesthetic,
+tiny handcrafted diorama,
+soft cinematic lighting,
+dreamy sakura atmosphere,
+pink pastel color palette,
+adorable miniature world,
+high detail composition,
+4k ultra hd,
+professional anime render
+
+Negative Prompt:
+low quality,
+blur,
+bad anatomy,
+distorted face,
+watermark,
+ugly lighting
+`;
+
+}
+
 app.get("/", (req,res)=>{
 
 res.send(`
@@ -15,53 +43,119 @@ res.send(`
 
 <title>Aeniikoo AI Premium</title>
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 
-body{
+*{
 margin:0;
+padding:0;
+box-sizing:border-box;
 font-family:sans-serif;
-background:linear-gradient(135deg,#ffd6e7,#fff);
-height:100vh;
+}
+
+body{
+background:
+linear-gradient(rgba(255,240,246,0.88),
+rgba(255,240,246,0.88)),
+url("https://images.unsplash.com/photo-1522383225653-ed111181a951?q=80&w=1200");
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+min-height:100vh;
+overflow-x:hidden;
 display:flex;
 justify-content:center;
 align-items:center;
+padding:20px;
+}
+
+/* Sakura Animation */
+
+.sakura{
+position:fixed;
+top:-10px;
+font-size:20px;
+animation:fall linear infinite;
+pointer-events:none;
+z-index:1;
+}
+
+@keyframes fall{
+
+0%{
+transform:translateY(-10px) rotate(0deg);
+opacity:1;
+}
+
+100%{
+transform:translateY(110vh) rotate(360deg);
+opacity:0;
+}
+
 }
 
 .container{
-width:90%;
-max-width:420px;
-background:white;
-padding:30px;
-border-radius:25px;
-box-shadow:0 10px 30px rgba(0,0,0,0.1);
+position:relative;
+z-index:2;
+width:100%;
+max-width:550px;
+background:rgba(255,255,255,0.72);
+backdrop-filter:blur(18px);
+border-radius:35px;
+padding:25px;
+box-shadow:0 10px 40px rgba(0,0,0,0.15);
 }
 
 h1{
 text-align:center;
+font-size:38px;
 color:#ff4fa3;
+margin-bottom:10px;
 }
 
-input{
+.subtitle{
+text-align:center;
+color:#777;
+margin-bottom:25px;
+}
+
+input,
+select{
 width:100%;
 padding:15px;
-margin-top:12px;
 border:none;
-border-radius:15px;
-background:#f5f5f5;
+border-radius:18px;
+margin-top:12px;
+background:#fff;
 font-size:16px;
+outline:none;
 }
 
 button{
 width:100%;
 padding:15px;
-margin-top:15px;
 border:none;
-border-radius:15px;
-background:#ff4fa3;
-color:white;
+border-radius:18px;
+margin-top:15px;
 font-size:16px;
 font-weight:bold;
 cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+transform:scale(1.03);
+}
+
+.pink{
+background:#ff4fa3;
+color:white;
+}
+
+.black{
+background:black;
+color:white;
 }
 
 #dashboard{
@@ -69,14 +163,111 @@ display:none;
 }
 
 .card{
-background:#fff0f7;
+background:rgba(255,240,246,0.9);
 padding:20px;
-border-radius:20px;
+border-radius:25px;
 margin-top:20px;
 }
 
-.logout{
-background:black;
+.chatbox{
+display:flex;
+gap:10px;
+margin-top:20px;
+}
+
+.chatbox input{
+flex:1;
+margin-top:0;
+}
+
+.chatbox button{
+width:60px;
+margin-top:0;
+border-radius:50%;
+font-size:22px;
+}
+
+.actions{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:15px;
+}
+
+.actions button{
+margin-top:0;
+}
+
+#hasil{
+margin-top:20px;
+max-height:350px;
+overflow:auto;
+padding:5px;
+}
+
+.msg-user{
+background:#ffe6f1;
+padding:14px;
+border-radius:18px;
+margin-top:10px;
+text-align:right;
+font-weight:bold;
+}
+
+.msg-bot{
+background:white;
+padding:18px;
+border-radius:18px;
+margin-top:10px;
+white-space:pre-wrap;
+line-height:1.6;
+border:1px solid #eee;
+}
+
+#loading{
+display:none;
+text-align:center;
+margin-top:15px;
+font-weight:bold;
+color:#ff4fa3;
+animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+
+0%{
+opacity:0.3;
+}
+
+50%{
+opacity:1;
+}
+
+100%{
+opacity:0.3;
+}
+
+}
+
+.dark{
+background:#111 !important;
+color:white;
+}
+
+.dark .container{
+background:rgba(20,20,20,0.72);
+}
+
+.dark .msg-bot{
+background:#222;
+color:white;
+border:none;
+}
+
+.dark input,
+.dark select{
+background:#222;
+color:white;
 }
 
 </style>
@@ -89,17 +280,29 @@ background:black;
 
 <div id="auth">
 
-<h1>Aeniikoo AI ✨</h1>
+<h1>🌸 Aeniikoo AI</h1>
 
-<input type="text" id="username" placeholder="Username">
+<p class="subtitle">
+Premium Anime Miniature Generator ✨
+</p>
 
-<input type="password" id="password" placeholder="Password">
+<input
+type="text"
+id="username"
+placeholder="Username"
+>
 
-<button onclick="signup()">
+<input
+type="password"
+id="password"
+placeholder="Password"
+>
+
+<button class="pink" onclick="signup()">
 Sign Up
 </button>
 
-<button onclick="login()">
+<button class="black" onclick="login()">
 Login
 </button>
 
@@ -109,23 +312,77 @@ Login
 
 <h1>Welcome ✨</h1>
 
+<p class="subtitle">
+Anime Premium Dashboard 🌸
+</p>
+
 <div class="card">
 
 <h3 id="welcomeUser"></h3>
 
-<p>Premium Member Active 🚀</p>
-
-<p>✔ AI Prompt Generator</p>
-<p>✔ Edit Text</p>
-<p>✔ Delete Text</p>
-<p>✔ Download Prompt</p>
-<p>✔ Dark Mode</p>
+<p style="margin-top:10px;">
+Premium Member Active 🚀
+</p>
 
 </div>
 
-<button class="logout" onclick="logout()">
+<select id="style">
+
+<option>Anime</option>
+<option>Ghibli</option>
+<option>Pixar</option>
+<option>Cyberpunk</option>
+<option>Realistic</option>
+
+</select>
+
+<div class="chatbox">
+
+<input
+type="text"
+id="tema"
+placeholder="Minta prompt miniature..."
+>
+
+<button class="pink" onclick="generateMiniature()">
+↑
+</button>
+
+</div>
+
+<div class="actions">
+
+<button class="pink" onclick="copyPrompt()">
+Copy
+</button>
+
+<button class="pink" onclick="downloadPrompt()">
+Download
+</button>
+
+<button class="pink" onclick="editText()">
+Edit
+</button>
+
+<button class="pink" onclick="deleteText()">
+Delete
+</button>
+
+<button class="black" onclick="toggleDark()">
+Dark Mode
+</button>
+
+<button class="black" onclick="logout()">
 Logout
 </button>
+
+</div>
+
+<div id="loading">
+Generating Anime Prompt...
+</div>
+
+<div id="hasil"></div>
 
 </div>
 
@@ -133,26 +390,51 @@ Logout
 
 <script>
 
+/* Sakura */
+
+for(let i=0;i<30;i++){
+
+const sakura = document.createElement("div");
+
+sakura.classList.add("sakura");
+
+sakura.innerHTML = "🌸";
+
+sakura.style.left = Math.random()*100 + "vw";
+
+sakura.style.animationDuration =
+(Math.random()*5+5)+"s";
+
+sakura.style.fontSize =
+(Math.random()*20+10)+"px";
+
+document.body.appendChild(sakura);
+
+}
+
+/* Auth */
+
 function signup(){
 
-const username = document.getElementById("username").value;
+const username =
+document.getElementById("username").value;
 
-const password = document.getElementById("password").value;
+const password =
+document.getElementById("password").value;
 
 if(!username || !password){
 
-alert("Isi username dan password");
+alert("Isi username & password");
 
 return;
 
 }
 
-const user = {
+localStorage.setItem("user",
+JSON.stringify({
 username,
 password
-};
-
-localStorage.setItem("user", JSON.stringify(user));
+}));
 
 alert("Sign Up berhasil ✨");
 
@@ -160,25 +442,28 @@ alert("Sign Up berhasil ✨");
 
 function login(){
 
-const username = document.getElementById("username").value;
+const username =
+document.getElementById("username").value;
 
-const password = document.getElementById("password").value;
+const password =
+document.getElementById("password").value;
 
-const savedUser = JSON.parse(localStorage.getItem("user"));
+const savedUser =
+JSON.parse(localStorage.getItem("user"));
 
 if(
 savedUser &&
-username === savedUser.username &&
-password === savedUser.password
+savedUser.username === username &&
+savedUser.password === password
 ){
 
-localStorage.setItem("loggedIn", "true");
+localStorage.setItem("login","true");
 
 showDashboard();
 
 }else{
 
-alert("Username atau Password salah");
+alert("Username / Password salah");
 
 }
 
@@ -186,7 +471,7 @@ alert("Username atau Password salah");
 
 function logout(){
 
-localStorage.removeItem("loggedIn");
+localStorage.removeItem("login");
 
 location.reload();
 
@@ -194,20 +479,146 @@ location.reload();
 
 function showDashboard(){
 
-document.getElementById("auth").style.display = "none";
+document.getElementById("auth").style.display="none";
 
-document.getElementById("dashboard").style.display = "block";
+document.getElementById("dashboard").style.display="block";
 
-const savedUser = JSON.parse(localStorage.getItem("user"));
+const savedUser =
+JSON.parse(localStorage.getItem("user"));
 
-document.getElementById("welcomeUser").innerText =
+document.getElementById("welcomeUser")
+.innerText =
 "Hello, " + savedUser.username;
 
 }
 
-if(localStorage.getItem("loggedIn") === "true"){
+if(localStorage.getItem("login")){
 showDashboard();
 }
+
+/* Tool */
+
+function toggleDark(){
+document.body.classList.toggle("dark");
+}
+
+function editText(){
+
+let text =
+document.getElementById("tema").value;
+
+let newText =
+prompt("Edit teks:", text);
+
+if(newText !== null){
+
+document.getElementById("tema").value =
+newText;
+
+}
+
+}
+
+function deleteText(){
+
+document.getElementById("tema").value = "";
+
+}
+
+function copyPrompt(){
+
+const text =
+document.getElementById("hasil").innerText;
+
+navigator.clipboard.writeText(text);
+
+alert("Prompt copied ✨");
+
+}
+
+function downloadPrompt(){
+
+const text =
+document.getElementById("hasil").innerText;
+
+const blob =
+new Blob([text],{
+type:"text/plain"
+});
+
+const a =
+document.createElement("a");
+
+a.href =
+URL.createObjectURL(blob);
+
+a.download = "prompt.txt";
+
+a.click();
+
+}
+
+const hasil =
+document.getElementById("hasil");
+
+async function generateMiniature(){
+
+const tema =
+document.getElementById("tema").value;
+
+const style =
+document.getElementById("style").value;
+
+if(!tema) return;
+
+document.getElementById("loading")
+.style.display="block";
+
+hasil.innerHTML +=
+\`<div class="msg-user">\${tema}</div>\`;
+
+document.getElementById("tema").value="";
+
+const response = await fetch("/generate",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+theme:tema,
+style:style
+})
+
+});
+
+const data =
+await response.json();
+
+document.getElementById("loading")
+.style.display="none";
+
+hasil.innerHTML +=
+\`<div class="msg-bot">\${data.result}</div>\`;
+
+hasil.scrollTop =
+hasil.scrollHeight;
+
+}
+
+document
+.getElementById("tema")
+.addEventListener("keypress", function(e){
+
+if(e.key==="Enter"){
+
+generateMiniature();
+
+}
+
+});
 
 </script>
 
@@ -215,6 +626,29 @@ showDashboard();
 </html>
 
 `);
+
+});
+
+app.post("/generate", (req,res)=>{
+
+const theme = req.body.theme;
+
+const style = req.body.style;
+
+if(!theme){
+
+return res.json({
+result:"Masukkan tema dulu 🌸"
+});
+
+}
+
+const result =
+createPrompt(theme, style);
+
+res.json({
+result
+});
 
 });
 
